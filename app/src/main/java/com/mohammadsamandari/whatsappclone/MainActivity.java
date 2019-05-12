@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.parse.LogInCallback;
+import com.parse.ParseAnalytics;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -21,7 +23,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        setTitle("What's App Login");
+        //Tracks this application being launched (and if this happened as the result of the user opening a push notification, this method sends along information to correlate this open with that push)
+        ParseAnalytics.trackAppOpenedInBackground(getIntent());
         //Connecting the Views.
         txtUsername=findViewById(R.id.txtUserName);
         txtPassword=findViewById(R.id.txtPassword);
@@ -47,6 +51,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loginFunction(View view){
-
+        //Loggin in the user
+        ParseUser.logInInBackground(txtUsername.getText().toString(),
+                txtPassword.getText().toString(),
+                new LogInCallback() {
+                    @Override
+                    public void done(ParseUser user, ParseException e) {
+                        if(e==null){
+                            Log.i("Lord","Login Successfull");
+                            //TODO: Login Process
+                        }else {
+                            Log.i("Lord","Login Error " +e.getMessage());
+                        Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();;
+                        }
+                    }
+                });
     }
 }
